@@ -9,7 +9,7 @@ export const usuariosConectados = new Map<string, string>();
 export const initSocket = (httpServer: HttpServer): Server => {
   io = new Server(httpServer, {
     cors: {
-      origin: ['http://localhost:3000', 'https://test-chat-socketio-express.onrender.com'], // Ajusta esto en producción
+      origin: '*', // Ajusta esto en producción
       methods: ['GET', 'POST'],
     }
   });
