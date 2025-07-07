@@ -5,7 +5,8 @@ import {
   // obtenerOCrearChat,
   getMessagesByChatId,
   getChatsByUserId,
-  sendMessage
+  sendMessage,
+  markMessagesAsRead
 } from '../controllers/mensaje.controller';
 
 const router = Router();
@@ -21,5 +22,8 @@ router.get('/chats/:chatId/messages', getMessagesByChatId);
 
 // Obtener chats de un usuario
 router.get('/users/:userId/chats', getChatsByUserId);
+
+// Marcar mensajes como leídos
+router.patch('/messages/mark-as-read', markMessagesAsRead);
 
 export default router;

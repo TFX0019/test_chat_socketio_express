@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "build": "tsc",
-    "start": "node dist/server.js",
-    "prisma:migrate": "npx prisma migrate deploy",
-    "prisma:studio": "npx prisma studio"
+    "dev": "bun run --hot src/server.ts",
+    "build": "bun run tsc",
+    "start": "bun run dist/server.js",
+    "prisma:migrate": "bunx prisma migrate deploy",
+    "prisma:studio": "bunx prisma studio"
   },
   "keywords": [],
   "author": "",

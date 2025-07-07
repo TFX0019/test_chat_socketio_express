@@ -43,6 +43,8 @@ export const sendMessage = async (req: Request, res: Response): Promise<any> => 
     try {
       const { content, senderId, receiverId } = req.body;
       const file = req.file;
+      console.log('Enviando mensaje:', { content, senderId, receiverId });
+      console.log('Enviando mensaje:', { file });
   
       if (!receiverId) {
         return res.status(400).json({ error: 'Se requiere un destinatario' });
@@ -232,4 +234,57 @@ function obtenerTipoMensaje(mimetype: string): string {
   if (mimetype.startsWith('audio/')) return 'audio';
   if (mimetype === 'application/pdf') return 'documento';
   return 'texto';
-}
+};
+
+// Marcar mensajes como leídos
+export const markMessagesAsRead = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { messageIds } = req.body;
+
+    if (!Array.isArray(messageIds) || messageIds.length === 0) {
+      res.status(400).json({ error: 'Se requiere un array de IDs de mensajes' });
+      return;
+    }
+
+    // Actualizar los mensajes a estado leído
+    await prisma.messages.updateMany({
+      where: {
+        id: {
+          in: messageIds.map(id => parseInt(id))
+        },
+        read: false // Solo actualizar si no están leídos
+      },
+      data: {
+        read: true,
+        updatedAt: new Date()
+      }
+    });
+
+    // Obtener los mensajes actualizados para emitir por socket
+    const updatedMessages = await prisma.messages.findMany({
+      where: {
+        id: {
+          in: messageIds.map(id => parseInt(id))
+        }
+      },
+      include: {
+        sender: true
+      }
+    });
+
+    // Emitir evento de mensajes leídos a los usuarios correspondientes
+    const io = getIO();
+    updatedMessages.forEach(message => {
+      io.to(`user_${message.senderId}`).emit('messages-read', {
+        messageIds: updatedMessages.map(m => m.id),
+        chatId: message.chatId,
+        readAt: new Date()
+      });
+    });
+
+    res.json({ success: true, message: 'Mensajes marcados como leídos' });
+  } catch (error) {
+    console.error('Error al marcar mensajes como leídos:', error);
+    res.status(500).json({ error: 'Error al marcar mensajes como leídos' });
+  }
+};
