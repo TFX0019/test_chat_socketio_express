@@ -1,5 +1,5 @@
 import * as admin from 'firebase-admin';
-import serviceAccount from "../../anterra-c5faf-firebase-adminsdk-fbsvc-f36b254639.json";
+import serviceAccount from "../../anterra-c5faf-firebase-adminsdk-fbsvc-a531393911.json";
 
 // Inicializar Firebase Admin
 if (!admin.apps.length) {
