@@ -54,6 +54,7 @@ model Users {
   messages     Messages[]
   chatSender   Chat[]    @relation("chatSender")
   chatReceiver Chat[]    @relation("chatReceiver")
+  fcmToken     String?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 }

@@ -101,13 +101,14 @@ interface IUpdateUserRequest extends Request {
   body: {
     email?: string;
     name?: string;
+    fcmToken?: string;
   };
 }
 
 export const updateUser = async (req: IUpdateUserRequest, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
-    const { email, name } = req.body;
+    const { email, name, fcmToken } = req.body;
 
     if (!id) {
       res.status(400).json({ error: 'El ID del usuario es requerido' });
@@ -144,7 +145,8 @@ export const updateUser = async (req: IUpdateUserRequest, res: Response): Promis
       where: { id: parseInt(id) },
       data: {
         ...(email && { email }),
-        ...(name && { name })
+        ...(name && { name }),
+        ...(fcmToken && { fcmToken })
       }
     });
 
